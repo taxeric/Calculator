@@ -32,17 +32,21 @@ class CalculateViewModel: ViewModel(){
     val showResultStr get() = _showResultStr
     var sentence by mutableStateOf(defaultSentence)
 
-    fun c() {
+    fun c(clearShowSb: Boolean = true) {
         valueList.clear()
         symbolsIndex.clear()
         sb.clear()
-        showSb.clear()
+        if (clearShowSb) {
+            showSb.clear()
+        }
         print()
     }
 
     fun X(){
         if (showSb.isNotEmpty()) {
-            showSb.delete(showSb.length - 1, showSb.length)
+            if (showSb.last() != '\n') {
+                showSb.delete(showSb.length - 1, showSb.length)
+            }
         }
         if (sb.isNotEmpty()) {
             sb.delete(sb.length - 1, sb.length)
@@ -109,7 +113,12 @@ class CalculateViewModel: ViewModel(){
             }
         }
         valueList.add(sb.substring(symbolsIndex[symbolsIndex.size - 1].index + 1, sb.length))
-        handleMD(isMinus, symbolsIndex, valueList)
+        try {
+            handleMD(isMinus, symbolsIndex, valueList)
+        } catch (e: Exception) {
+            showSb.append("\n").append("Error").append("\n")
+            c(false)
+        }
     }
 
     private fun handleMD(firstIsMinus: Boolean = false, list: MutableList<SymbolEntity>, value: MutableList<String>) {
