@@ -1,8 +1,8 @@
 package com.lanier.calculator.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import com.lanier.calculator.entity.CalculateResult
+import com.lanier.calculator.ui.screen.common.ModifyInfoDialog
+import com.lanier.calculator.ui.theme.MyTvColor
 import com.lanier.calculator.util.LocalCache
 import com.lanier.calculator.util.log
 
@@ -32,6 +34,8 @@ import com.lanier.calculator.util.log
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryPage(navHostController: NavHostController, title: String){
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         topBar = {
@@ -43,7 +47,11 @@ fun HistoryPage(navHostController: NavHostController, title: String){
                     }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                ),
+                scrollBehavior = scrollBehavior
             )
         }
     ){ innerPadding ->
@@ -98,7 +106,7 @@ fun HistoryItem(index: Int, data: CalculateResult, modify: (Int, Boolean, String
             withStyle(SpanStyle(color = Color.Gray)){
                 append("#")
             }
-            withStyle(SpanStyle(color = Color.Black)){
+            withStyle(SpanStyle(color = MyTvColor(isSystemInDarkTheme()).baseColor)){
                 append( "${index + 1}")
             }
         }, modifier = Modifier.constrainAs(tag) {
@@ -110,7 +118,7 @@ fun HistoryItem(index: Int, data: CalculateResult, modify: (Int, Boolean, String
                 withStyle(SpanStyle(color = Color.Gray, fontSize = 14.sp)) {
                     append(mData[0])
                 }
-                withStyle(SpanStyle(color = Color.Black, fontSize = 18.sp)) {
+                withStyle(SpanStyle(color = MyTvColor(isSystemInDarkTheme()).baseColor, fontSize = 18.sp)) {
                     append("=")
                     append(mData[1])
                 }

@@ -8,7 +8,7 @@ package com.lanier.calculator.entity
  */
 
 const val ROUTE_SCREEN_MAIN_CALCULATE = "screenCalculate"
-const val ROUTE_SCREEN_MAIN_OTHER = "screenOther"
+const val ROUTE_SCREEN_MAIN_SETTINGS = "screenOther"
 const val ROUTE_SCREEN_MAIN_HISTORY = "screenHistory"
 
 const val ROUTE_SCREEN_WEB_VIEW = "webView"
@@ -18,6 +18,6 @@ const val ROUTE_PARAMS_WEB_VIEW_URL = "webViewUrl"
 sealed class Screen (val route: String, val title: String) {
     object MainCalculate : Screen(ROUTE_SCREEN_MAIN_CALCULATE, "计算器")
     object History: Screen(ROUTE_SCREEN_MAIN_HISTORY, "历史")
-    object OtherCalculate : Screen(ROUTE_SCREEN_MAIN_OTHER, "其他")
+    object Settings : Screen(ROUTE_SCREEN_MAIN_SETTINGS, "设置")
     object WebViewPage: Screen(ROUTE_SCREEN_WEB_VIEW, "")
 }

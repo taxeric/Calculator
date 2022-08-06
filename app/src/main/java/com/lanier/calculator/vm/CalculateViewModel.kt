@@ -1,10 +1,17 @@
 package com.lanier.calculator.vm
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.lanier.calculator.entity.CalculateResult
+import com.lanier.calculator.entity.Sentences
 import com.lanier.calculator.util.LocalCache
+import com.lanier.calculator.util.defaultSentence
 import com.lanier.calculator.util.log
+import com.lanier.calculator.util.sentences
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlin.random.Random
 
 /**
  * Author: 芒硝
@@ -19,8 +26,11 @@ class CalculateViewModel: ViewModel(){
     private val symbolsIndex = mutableListOf<SymbolEntity>()
     private val valueList = mutableListOf<String>()
 
+    var shouldShowAnim by mutableStateOf(false)
+
     private val _showResultStr = MutableStateFlow("")
     val showResultStr get() = _showResultStr
+    var sentence by mutableStateOf(defaultSentence)
 
     fun c() {
         valueList.clear()
@@ -31,6 +41,9 @@ class CalculateViewModel: ViewModel(){
     }
 
     fun X(){
+        if (showSb.isNotEmpty()) {
+            showSb.delete(showSb.length - 1, showSb.length)
+        }
         if (sb.isNotEmpty()) {
             sb.delete(sb.length - 1, sb.length)
             print()
@@ -108,9 +121,9 @@ class CalculateViewModel: ViewModel(){
             if (symbolEntity.symbolChar == '×' || symbolEntity.symbolChar == '/') {
                 isContains = true
                 val r = if (symbolEntity.symbolChar == '×') {
-                    value[index].toBigDecimal() * value[index + 1].toBigDecimal()
+                    value[index].toDouble() * value[index + 1].toDouble()
                 } else {
-                    value[index].toBigDecimal() / value[index + 1].toBigDecimal()
+                    value[index].toDouble() / value[index + 1].toDouble()
                 }
                 value.removeAt(index + 1)
                 value.removeAt(index)
@@ -128,25 +141,26 @@ class CalculateViewModel: ViewModel(){
 
     private fun handleJJ(firstIsMinus: Boolean = false, list: MutableList<SymbolEntity>, value: MutableList<String>) {
         var result = if (firstIsMinus) {
-            - value[0].toBigDecimal()
+            - value[0].toDouble()
         } else {
-            value[0].toBigDecimal()
+            value[0].toDouble()
         }
         list.forEachIndexed { index, data ->
             result = if (data.symbolChar == '+') {
-                result + value[index + 1].toBigDecimal()
+                result + value[index + 1].toDouble()
             } else {
-                result - value[index + 1].toBigDecimal()
+                result - value[index + 1].toDouble()
             }
         }
-        "result -> $result".log()
+        val mResult = result.toBigDecimal().stripTrailingZeros().toPlainString()
+        "result -> $mResult".log()
         if (firstIsMinus) {
             showSb.insert(0, '-')
             sb.insert(0, '-')
         }
-        sb.append("\n").append("=").append(result)
+        sb.append("\n").append("=").append(mResult)
         val singleData = sb.toString()
-        showSb.append("\n").append("=").append(result).append("\n")
+        showSb.append("\n").append("=").append(mResult).append("\n")
         LocalCache.calculateResult.add(CalculateResult(result = singleData))
         valueList.clear()
         symbolsIndex.clear()

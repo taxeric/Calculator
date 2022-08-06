@@ -1,17 +1,13 @@
-package com.lanier.calculator.ui.screen
+package com.lanier.calculator.ui.screen.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -38,8 +34,11 @@ fun ModifyInfoDialog(desc: String, onDismiss: (Boolean, String) -> Unit){
         }
         Column(modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(Color.White)) {
-            Text(text = "更新", modifier = Modifier.fillMaxWidth().padding(10.dp))
+            .background(MaterialTheme.colorScheme.background)
+        ) {
+            Text(text = "更新", modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp))
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(value = mDesc, onValueChange = {
                 isModify = true
@@ -47,7 +46,9 @@ fun ModifyInfoDialog(desc: String, onDismiss: (Boolean, String) -> Unit){
             },
             label = {
                 Text(text = "更改描述")
-            }, modifier = Modifier.fillMaxWidth().padding(10.dp))
+            }, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp))
             Spacer(modifier = Modifier.height(20.dp))
             TextButton(onClick = { onDismiss(isModify, mDesc) }, modifier = Modifier
                 .align(Alignment.End)

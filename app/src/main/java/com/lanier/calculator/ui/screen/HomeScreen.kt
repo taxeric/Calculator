@@ -41,5 +41,8 @@ fun NavBar(navController: NavHostController, paddingValues: PaddingValues){
         composable(Screen.History.route) {
             HistoryPage(navController, Screen.History.title)
         }
+        composable(Screen.Settings.route) {
+            SettingsPage(navController, Screen.Settings.title)
+        }
     }
 }
