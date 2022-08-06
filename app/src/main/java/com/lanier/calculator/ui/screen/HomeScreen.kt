@@ -11,10 +11,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.lanier.calculator.entity.ROUTE_PARAMS_WEB_VIEW_TITLE
+import com.lanier.calculator.entity.ROUTE_PARAMS_WEB_VIEW_URL
 import com.lanier.calculator.entity.Screen
 
 /**
@@ -43,6 +47,22 @@ fun NavBar(navController: NavHostController, paddingValues: PaddingValues){
         }
         composable(Screen.Settings.route) {
             SettingsPage(navController, Screen.Settings.title)
+        }
+        composable(
+            route = "${Screen.WebViewPage.route}/{${ROUTE_PARAMS_WEB_VIEW_TITLE}}/{${ROUTE_PARAMS_WEB_VIEW_URL}}",
+            arguments = listOf(
+                navArgument(ROUTE_PARAMS_WEB_VIEW_TITLE) {
+                    type = NavType.StringType
+                },
+                navArgument(ROUTE_PARAMS_WEB_VIEW_URL) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            val argument = requireNotNull(it.arguments)
+            val title = argument.getString(ROUTE_PARAMS_WEB_VIEW_TITLE)?: ""
+            val url = argument.getString(ROUTE_PARAMS_WEB_VIEW_URL)?: ""
+            WebViewByUrl(navController, title, url)
         }
     }
 }

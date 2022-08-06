@@ -37,7 +37,7 @@ fun SettingsPage(navHostController: NavHostController, title: String) {
             )
         }
     ) { innerPadding ->
-        HistoryPageImpl(paddingValues = innerPadding)
+        SettingsPageImpl(innerPadding)
     }
 }
 

@@ -10,7 +10,7 @@ import kotlin.random.Random
  * Desc  :
  */
 val sentences = listOf(
-    Sentences("洛克王国", "信步流年，复印岁月"),
+    Sentences("洛克王国", "信步流年，付印岁月"),
     Sentences("异度之刃", "并不需要什么永远，就算只是刹那间，只要能彼此相依就已足够—"),
     Sentences("《可塑性记忆》", "时光流转，愿你与真爱之人能够重逢"),
     Sentences("洛克王国", "学到很多东西的决窍，就是不要一下子学很多的东西"),

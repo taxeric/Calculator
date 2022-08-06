@@ -8,6 +8,7 @@ import com.lanier.calculator.entity.CalculateResult
  * Date  : 2022/8/5 13:40
  * Desc  : 内存缓存数据
  */
+@Deprecated("didn't use")
 object LocalCache {
 
     val calculateResult = mutableListOf<CalculateResult>()

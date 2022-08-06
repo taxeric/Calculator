@@ -11,9 +11,13 @@ import com.lanier.calculator.entity.CalculateResult
 object CalculatorDbHelper {
 
     private lateinit var database:  CalculateDatabase
+    private var _hasInit = false
+    val hasInit get() = _hasInit
 
     fun init(context: Context){
-        database = CalculateDatabase.createDatabase(context)
+        database = CalculateDatabase.createDatabase(context) {
+            _hasInit = true
+        }
     }
 
     suspend fun getResults(important: Boolean = false): List<CalculateResult> {

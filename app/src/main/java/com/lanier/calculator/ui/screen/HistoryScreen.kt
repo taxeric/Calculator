@@ -57,12 +57,12 @@ fun HistoryPage(navHostController: NavHostController, title: String){
             )
         }
     ){ innerPadding ->
-        HistoryPageImpl(paddingValues = innerPadding)
+        HistoryDataHandler(paddingValues = innerPadding)
     }
 }
 
 @Composable
-fun HistoryPageImpl(paddingValues: PaddingValues) {
+fun HistoryDataHandler(paddingValues: PaddingValues) {
     val vm = viewModel<HistoryViewModel>()
     val cache = vm.dbResult.collectAsState().value
     val importantList = cache.filter {
@@ -71,16 +71,28 @@ fun HistoryPageImpl(paddingValues: PaddingValues) {
     val notImportantList = cache.filter {
         !it.important
     }
-    val list = (importantList + notImportantList).toMutableStateList()
+    val list = importantList + notImportantList
     LaunchedEffect(key1 = Unit) {
         vm.getCalculateResults()
     }
+    HistoryPageImpl(paddingValues, list) {
+        vm.update(it)
+    }
+}
+
+@Composable
+fun HistoryPageImpl(
+    paddingValues: PaddingValues = PaddingValues(0.dp),
+    data: List<CalculateResult>,
+    clickEventEnable: Boolean = true,
+    update: (CalculateResult) -> Unit) {
+    val list = data.toMutableStateList()
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         itemsIndexed(list) { index, item ->
-            HistoryItem(index, item) { mIndex, important, newDesc ->
+            HistoryItem(index, item, clickEventEnable) { mIndex, important, newDesc ->
                 val mData = list[mIndex].copy(important = important, desc = newDesc)
                 list[mIndex] = mData
-                vm.update(mData)
+                update(mData)
 //                LocalCache.calculateResult[mIndex] =
 //                    LocalCache.calculateResult[mIndex].copy(important = important, desc = newDesc)
             }
@@ -92,7 +104,12 @@ fun HistoryPageImpl(paddingValues: PaddingValues) {
 }
 
 @Composable
-fun HistoryItem(index: Int, data: CalculateResult, modify: (Int, Boolean, String) -> Unit = {_, _, _ ->}) {
+fun HistoryItem(
+    index: Int,
+    data: CalculateResult,
+    clickEventEnable: Boolean,
+    modify: (Int, Boolean, String) -> Unit = {_, _, _ ->}
+) {
     val mData = data.result.split("=")
     var importantValue by remember {
         mutableStateOf(data.important)
@@ -100,10 +117,13 @@ fun HistoryItem(index: Int, data: CalculateResult, modify: (Int, Boolean, String
     var showDialog by remember {
         mutableStateOf(false)
     }
-    "data -> ${data.desc}".log()
     ConstraintLayout(modifier = Modifier
         .fillMaxWidth()
-        .clickable { showDialog = true }
+        .clickable {
+            if (clickEventEnable) {
+                showDialog = true
+            }
+        }
         .background(Color.Transparent)
         .padding(10.dp, 5.dp)
     ) {

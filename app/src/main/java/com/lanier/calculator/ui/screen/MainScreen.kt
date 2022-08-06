@@ -8,6 +8,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -24,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.lanier.calculator.R
 import com.lanier.calculator.entity.Screen
+import com.lanier.calculator.ui.screen.common.ActivityDialog
 import com.lanier.calculator.ui.theme.BaseMainAppTheme
 import com.lanier.calculator.ui.theme.MyTvColor
 import com.lanier.calculator.util.log
@@ -39,6 +41,9 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(navHostController: NavHostController, title: String) {
+    var showInfoDialog by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         topBar = {
@@ -51,17 +56,22 @@ fun MainPage(navHostController: NavHostController, title: String) {
                         }) {
                             Icon(painter = painterResource(id = R.drawable.ic_baseline_history_24), contentDescription = "history")
                         }
-/*                        IconButton(onClick = {
-                            navHostController.navigate(Screen.Settings.route)
+                        IconButton(onClick = {
+                            showInfoDialog = true
                         }) {
-                            Icon(imageVector = Icons.Filled.Settings, contentDescription = "history")
-                        }*/
+                            Icon(imageVector = Icons.Filled.Info, contentDescription = "history")
+                        }
                     }
                 },
             )
         },
     ) { innerPadding ->
         MainPageImpl(modifier = Modifier.padding(innerPadding))
+    }
+    if (showInfoDialog) {
+        ActivityDialog(navHostController) {
+            showInfoDialog = false
+        }
     }
 }
 
