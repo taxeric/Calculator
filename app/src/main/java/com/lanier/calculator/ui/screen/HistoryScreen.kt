@@ -20,12 +20,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.lanier.calculator.entity.CalculateResult
 import com.lanier.calculator.ui.screen.common.ModifyInfoDialog
 import com.lanier.calculator.ui.theme.MyTvColor
 import com.lanier.calculator.util.LocalCache
 import com.lanier.calculator.util.log
+import com.lanier.calculator.vm.HistoryViewModel
 
 /**
  * Create by Eric
@@ -61,19 +63,26 @@ fun HistoryPage(navHostController: NavHostController, title: String){
 
 @Composable
 fun HistoryPageImpl(paddingValues: PaddingValues) {
-    val importantList = LocalCache.calculateResult.filter {
+    val vm = viewModel<HistoryViewModel>()
+    val cache = vm.dbResult.collectAsState().value
+    val importantList = cache.filter {
         it.important
     }
-    val notImportantList = LocalCache.calculateResult.filter {
+    val notImportantList = cache.filter {
         !it.important
     }
     val list = (importantList + notImportantList).toMutableStateList()
+    LaunchedEffect(key1 = Unit) {
+        vm.getCalculateResults()
+    }
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         itemsIndexed(list) { index, item ->
             HistoryItem(index, item) { mIndex, important, newDesc ->
-                list[mIndex] = list[mIndex].copy(important = important, desc = newDesc)
-                LocalCache.calculateResult[mIndex] =
-                    LocalCache.calculateResult[mIndex].copy(important = important, desc = newDesc)
+                val mData = list[mIndex].copy(important = important, desc = newDesc)
+                list[mIndex] = mData
+                vm.update(mData)
+//                LocalCache.calculateResult[mIndex] =
+//                    LocalCache.calculateResult[mIndex].copy(important = important, desc = newDesc)
             }
             if (index < list.size) {
                 Divider()

@@ -4,13 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lanier.calculator.entity.CalculateResult
 import com.lanier.calculator.entity.Sentences
+import com.lanier.calculator.repo.CalculatorDbHelper
 import com.lanier.calculator.util.LocalCache
 import com.lanier.calculator.util.defaultSentence
 import com.lanier.calculator.util.log
 import com.lanier.calculator.util.sentences
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 /**
@@ -170,11 +173,13 @@ class CalculateViewModel: ViewModel(){
         sb.append("\n").append("=").append(mResult)
         val singleData = sb.toString()
         showSb.append("\n").append("=").append(mResult).append("\n")
-        LocalCache.calculateResult.add(CalculateResult(result = singleData))
+        val calculate = CalculateResult(result = singleData, id = System.currentTimeMillis())
+//        LocalCache.calculateResult.add(calculate)
         valueList.clear()
         symbolsIndex.clear()
         print()
         sb.clear()
+        insert(calculate)
     }
 
     private fun Char.isBaseSymbol(): Boolean = this == '+' || this == '-' || this == '×' || this == '/'
@@ -248,6 +253,12 @@ class CalculateViewModel: ViewModel(){
     private fun print() {
         val result = showSb.toString()
         _showResultStr.tryEmit(result)
+    }
+
+    private fun insert(calculateResult: CalculateResult){
+        viewModelScope.launch {
+            CalculatorDbHelper.insert(calculateResult)
+        }
     }
 
     data class SymbolEntity(
