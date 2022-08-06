@@ -1,5 +1,7 @@
 package com.lanier.calculator.util
 
+import com.lanier.calculator.entity.CalculateResult
+
 /**
  * Author: 芒硝
  * Email : 1248389474@qq.com
@@ -8,5 +10,5 @@ package com.lanier.calculator.util
  */
 object LocalCache {
 
-    val calculateResult = mutableListOf<String>()
+    val calculateResult = mutableListOf<CalculateResult>()
 }

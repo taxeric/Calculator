@@ -1,6 +1,7 @@
 package com.lanier.calculator.vm
 
 import androidx.lifecycle.ViewModel
+import com.lanier.calculator.entity.CalculateResult
 import com.lanier.calculator.util.LocalCache
 import com.lanier.calculator.util.log
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,6 +50,18 @@ class CalculateViewModel: ViewModel(){
 
     fun calculate() {
         if (sb.isEmpty()) {
+            return
+        }
+        var symbolCount = 0
+        sb.forEach {
+            if (it.isBaseSymbol()) {
+                symbolCount ++
+            }
+        }
+        if (symbolCount == 0) {
+            return
+        }
+        if (symbolCount == 1 && sb.last().isBaseSymbol() || symbolCount == 1 && sb.first() == '-') {
             return
         }
         if (sb.last().isBaseSymbol()) {
@@ -122,9 +135,12 @@ class CalculateViewModel: ViewModel(){
             }
         }
         "result -> $result".log()
+        if (firstIsMinus) {
+            sb.insert(0, '-')
+        }
         sb.append("\n").append("=").append(result)
         val singleData = sb.toString()
-        LocalCache.calculateResult.add(singleData)
+        LocalCache.calculateResult.add(CalculateResult(result = singleData))
         print()
         sb.clear()
     }

@@ -17,7 +17,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.lanier.calculator.R
+import com.lanier.calculator.entity.Screen
 import com.lanier.calculator.vm.CalculateViewModel
 
 /**
@@ -26,14 +28,16 @@ import com.lanier.calculator.vm.CalculateViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage() {
+fun MainPage(navHostController: NavHostController, title: String) {
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         topBar = {
             SmallTopAppBar(
-                title = { Text(text = "计算器") },
+                title = { Text(text = title) },
                 actions = {
-                    IconButton(onClick = {  }) {
+                    IconButton(onClick = {
+                        navHostController.navigate(Screen.History.route)
+                    }) {
 //                        Icon(imageVector = Icons.Filled.Send, contentDescription = "history")
                         Icon(painter = painterResource(id = R.drawable.ic_baseline_history_24), contentDescription = "history")
                     }
@@ -89,10 +93,10 @@ fun MainPageLandscapeImpl(modifier: Modifier = Modifier, result: String){
 fun ResultShowView(modifier: Modifier = Modifier, result: String) {
     Column(modifier = modifier.fillMaxWidth()) {
 //        Text(text = "信步流年，付印岁月")
-        Image(painter = painterResource(id = R.drawable.ic_roco), contentDescription = "back", modifier = modifier
+/*        Image(painter = painterResource(id = R.drawable.ic_roco), contentDescription = "back", modifier = modifier
             .fillMaxWidth()
             .padding(10.dp, 0.dp)
-            .clip(RoundedCornerShape(10)))
+            .clip(RoundedCornerShape(10)))*/
         Card(modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp),
@@ -127,7 +131,7 @@ fun CalculationView(modifier: Modifier = Modifier) {
                 .weight(2f)
                 .padding(5.dp, 0.dp)
                 .fillMaxHeight()) {
-                Text(text = "C", fontSize = 16.sp, textAlign = TextAlign.Center,)
+                Text(text = "CE", fontSize = 16.sp, textAlign = TextAlign.Center,)
             }
             Button(onClick = { vm.X() }, modifier = Modifier
                 .weight(1f)

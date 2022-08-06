@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.lanier.calculator.ui.screen.MainHome
 import com.lanier.calculator.ui.screen.MainPage
 import com.lanier.calculator.ui.theme.CalculatorTheme
 
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 //                    Greeting("Android")
-                    MainPage()
+                    MainHome()
                 }
             }
         }
