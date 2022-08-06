@@ -16,6 +16,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
@@ -89,7 +90,18 @@ fun ActivityDialog(navController: NavHostController, onDismiss: () -> Unit) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Row(modifier = Modifier.fillMaxWidth().padding(10.dp, 0.dp)) {
+            Text(text = "功能", fontSize = 18.sp, modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp))
+            TODOView(content = "四则运算")
+            TODOView(content = "历史记录")
+            TODOView(content = "MD3 风格")
+            TODOView(content = "横竖屏切换")
+            TODOView(content = "暗色模式")
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp, 0.dp)) {
                 Text(text = "项目地址: ")
                 val buildStr1 = buildAnnotatedString {
                     withStyle(SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
@@ -103,7 +115,9 @@ fun ActivityDialog(navController: NavHostController, onDismiss: () -> Unit) {
                 })
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Row(modifier = Modifier.fillMaxWidth().padding(10.dp, 0.dp)) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp, 0.dp)) {
                 Text(text = "活动地址: ")
                 val buildStr1 = buildAnnotatedString {
                     withStyle(SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
