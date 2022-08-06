@@ -61,7 +61,13 @@ fun HistoryPage(navHostController: NavHostController, title: String){
 
 @Composable
 fun HistoryPageImpl(paddingValues: PaddingValues) {
-    val list = LocalCache.calculateResult.toMutableStateList()
+    val importantList = LocalCache.calculateResult.filter {
+        it.important
+    }
+    val notImportantList = LocalCache.calculateResult.filter {
+        !it.important
+    }
+    val list = (importantList + notImportantList).toMutableStateList()
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         itemsIndexed(list) { index, item ->
             HistoryItem(index, item) { mIndex, important, newDesc ->
