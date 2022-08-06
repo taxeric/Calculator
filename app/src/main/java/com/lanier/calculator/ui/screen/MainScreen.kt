@@ -104,6 +104,7 @@ fun ResultShowView(modifier: Modifier = Modifier, result: String) {
             Text(
                 text = result,
                 textAlign = TextAlign.End,
+                fontSize = 16.sp,
                 color = Color(0xFF83AAF7),
                 modifier = Modifier
                     .fillMaxWidth()

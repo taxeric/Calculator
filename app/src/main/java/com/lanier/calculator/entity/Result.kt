@@ -6,5 +6,6 @@ package com.lanier.calculator.entity
  */
 data class CalculateResult(
     val important: Boolean = false,
-    val result: String = ""
+    val result: String = "",
+    val desc: String = ""
 )

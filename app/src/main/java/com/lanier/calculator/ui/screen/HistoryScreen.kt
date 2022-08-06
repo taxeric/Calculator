@@ -23,6 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import com.lanier.calculator.entity.CalculateResult
 import com.lanier.calculator.util.LocalCache
+import com.lanier.calculator.util.log
 
 /**
  * Create by Eric
@@ -55,31 +56,52 @@ fun HistoryPageImpl(paddingValues: PaddingValues) {
     val list = LocalCache.calculateResult.toMutableStateList()
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         itemsIndexed(list) { index, item ->
-            HistoryItem(index, item)
+            HistoryItem(index, item) { mIndex, important, newDesc ->
+                list[mIndex] = list[mIndex].copy(important = important, desc = newDesc)
+                LocalCache.calculateResult[mIndex] =
+                    LocalCache.calculateResult[mIndex].copy(important = important, desc = newDesc)
+            }
+            if (index < list.size) {
+                Divider()
+            }
         }
     }
 }
 
 @Composable
-fun HistoryItem(index: Int, data: CalculateResult) {
+fun HistoryItem(index: Int, data: CalculateResult, modify: (Int, Boolean, String) -> Unit = {_, _, _ ->}) {
     val mData = data.result.split("=")
     var importantValue by remember {
         mutableStateOf(data.important)
     }
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    "data -> ${data.desc}".log()
     ConstraintLayout(modifier = Modifier
         .fillMaxWidth()
-        .clickable {  }
+        .clickable { showDialog = true }
         .background(Color.Transparent)
         .padding(10.dp, 5.dp)
     ) {
-        val (cbLayout, tag, result) = createRefs()
+        val (cbLayout, tag, desc, result) = createRefs()
         Row(modifier = Modifier.constrainAs(cbLayout) {
             start.linkTo(parent.start)
         }, verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = importantValue, onCheckedChange = { importantValue = it })
+            Checkbox(checked = importantValue, onCheckedChange = {
+                importantValue = it
+                modify(index, importantValue, data.desc)
+            })
             Text(text = "重要")
         }
-        Text(text = "#${index + 1}", modifier = Modifier.constrainAs(tag){
+        Text(text = buildAnnotatedString {
+            withStyle(SpanStyle(color = Color.Gray)){
+                append("#")
+            }
+            withStyle(SpanStyle(color = Color.Black)){
+                append( "${index + 1}")
+            }
+        }, modifier = Modifier.constrainAs(tag) {
             end.linkTo(parent.end)
             baseline.linkTo(cbLayout.baseline)
         })
@@ -93,9 +115,33 @@ fun HistoryItem(index: Int, data: CalculateResult) {
                     append(mData[1])
                 }
             }, textAlign = TextAlign.End, modifier = Modifier
-                .fillMaxWidth().constrainAs(result){
+                .fillMaxWidth()
+                .constrainAs(result) {
                     top.linkTo(cbLayout.bottom)
                 }
         )
+        if (data.desc.isNotEmpty()) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(desc) {
+                    top.linkTo(result.bottom)
+                }) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = data.desc,
+                    color = Color(0xFF83AAF7),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+    if (showDialog) {
+        ModifyInfoDialog(desc = data.desc) { update, desc ->
+            "m -> $update $desc".log()
+            if (update) {
+                modify(index, importantValue, desc)
+            }
+            showDialog = false
+        }
     }
 }

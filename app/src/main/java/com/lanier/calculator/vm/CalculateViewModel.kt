@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class CalculateViewModel: ViewModel(){
 
     private val sb = StringBuilder()
+    private val showSb = StringBuilder()
     private val symbolsIndex = mutableListOf<SymbolEntity>()
     private val valueList = mutableListOf<String>()
 
@@ -25,6 +26,7 @@ class CalculateViewModel: ViewModel(){
         valueList.clear()
         symbolsIndex.clear()
         sb.clear()
+        showSb.clear()
         print()
     }
 
@@ -43,6 +45,7 @@ class CalculateViewModel: ViewModel(){
             "+", "-", "×", "/" -> checkBaseSymbol(str)
             else -> {
                 sb.append(str)
+                showSb.append(str)
                 print()
             }
         }
@@ -66,12 +69,14 @@ class CalculateViewModel: ViewModel(){
         }
         if (sb.last().isBaseSymbol()) {
             sb.deleteCharAt(sb.length - 1)
+            showSb.deleteCharAt(sb.length - 1)
         }
         sb.toString().log()
         var isMinus = false
         if (sb.first() == '-') {
             isMinus = true
             sb.deleteCharAt(0)
+            showSb.deleteCharAt(0)
         }
         var baseIndex = -1
         sb.forEachIndexed { index, c ->
@@ -136,11 +141,15 @@ class CalculateViewModel: ViewModel(){
         }
         "result -> $result".log()
         if (firstIsMinus) {
+            showSb.insert(0, '-')
             sb.insert(0, '-')
         }
         sb.append("\n").append("=").append(result)
         val singleData = sb.toString()
+        showSb.append("\n").append("=").append(result).append("\n")
         LocalCache.calculateResult.add(CalculateResult(result = singleData))
+        valueList.clear()
+        symbolsIndex.clear()
         print()
         sb.clear()
     }
@@ -149,18 +158,25 @@ class CalculateViewModel: ViewModel(){
 
     private fun checkPoint(str: String){
         if (sb.isEmpty()){
+            showSb.append("0")
             sb.append("0")
         }
+        if (sb.last() == '.'){
+            return
+        }
         sb.append(".")
+        showSb.append(".")
         print()
     }
 
     private fun checkBaseSymbol(symbol: String) {
         if (sb.isEmpty()){
             if (symbol != "-"){
+
                 return
             }
             sb.append(symbol)
+            showSb.append(symbol)
             print()
         } else {
             val sbLast = sb.last()
@@ -168,6 +184,7 @@ class CalculateViewModel: ViewModel(){
                 return
             }
             sb.append(symbol)
+            showSb.append(symbol)
             print()
         }
     }
@@ -206,7 +223,7 @@ class CalculateViewModel: ViewModel(){
     }
 
     private fun print() {
-        val result = sb.toString()
+        val result = showSb.toString()
         _showResultStr.tryEmit(result)
     }
 
